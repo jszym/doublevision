@@ -181,10 +181,16 @@ def run_inference_on_image(image):
     node_lookup = NodeLookup()
 
     top_k = predictions.argsort()[-FLAGS.num_top_predictions:][::-1]
+
+    result = {}
     for node_id in top_k:
       human_string = node_lookup.id_to_string(node_id)
       score = predictions[node_id]
-      print('%s (score = %.5f)' % (human_string, score))
+
+      result[int(score*100)]=human_string.split(",")
+      #print('%s (score = %.5f)' % (human_string, score))
+
+    return result
 
 
 def maybe_download_and_extract():
@@ -218,7 +224,7 @@ def main(_):
 
 def classify(image):
   maybe_download_and_extract()
-  run_inference_on_image(image)
+  return run_inference_on_image(image)
 
 
 if __name__ == '__main__':

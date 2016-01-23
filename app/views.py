@@ -1,6 +1,6 @@
 from app import app
 from flask import request
-import os, sys
+import os, sys, random
 # doublevision helper dependencies
 import video_dl, extract_frames, recognise
 
@@ -31,7 +31,19 @@ def analyse_vid():
 
     frames = extract_frames.extract("{}.mp4".format(ytid), 1000)
 
-    for frame_path in frames:
-        print recognise.get_tensor_tags(frame_path)
+    # Recognise objects in images
 
-    return "Success"
+    total_tags = {}
+
+    for frame_path in frames:
+        tags = recognise.get_tensor_tags(frame_path)
+        total_tags.update(tags)
+
+    # Return top recognised keys
+
+    sorted_tag_keys = sorted(total_tags, reverse = True)
+
+    top_tag = total_tags[sorted_tag_keys[0]]
+
+    runid = random.randint(0,100) #just to show that page updated
+    return "1. {} runid:{}".format(top_tag,runid)

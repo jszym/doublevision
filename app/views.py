@@ -2,7 +2,7 @@ from app import app
 from flask import request
 import os, sys
 # doublevision helper dependencies
-import video_dl, extract_frames
+import video_dl, extract_frames, recognise
 
 @app.route('/')
 @app.route('/index')
@@ -29,6 +29,9 @@ def analyse_vid():
 
     # Extract frames
 
-    extract_frames.extract("{}.mp4".format(ytid), 500)
+    frames = extract_frames.extract("{}.mp4".format(ytid), 1000)
+
+    for frame_path in frames:
+        print recognise.get_tensor_tags(frame_path)
 
     return "Success"

@@ -3,3 +3,4 @@ venv
 *.mp4
 *.pyc
 frames/*
+cache/*

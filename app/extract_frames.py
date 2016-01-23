@@ -33,7 +33,7 @@ def extract(vid_path, f_interval):
     	rval, frame = cv.read()
     	if frame_num % f_interval == 0:
             file = 'frames/{}-{}.jpg'.format(file_name, frame_num)
-            file.append(file_name_array)
+            file_name_array.append(file)
             print file
             cv2.imwrite(file, frame)
             cv2.waitKey(1)

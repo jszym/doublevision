@@ -1,8 +1,8 @@
 from app import app
 from flask import request
-import os, sys, random
+import os, sys, random, json
 # doublevision helper dependencies
-import video_dl, extract_frames, recognise
+import video_dl, extract_frames, recognise, context
 
 @app.route('/')
 @app.route('/index')
@@ -23,27 +23,49 @@ def analyse_vid():
     if ytid:
         video_dl.by_ytid(ytid) # download the video by id, will save as "ytid".mp4
     elif url:
-        ytid = video_dl.by_url(url) # download by url
+        ytid = video_dl.by_url(url) # download by url, ytid returned and stored
     else:
         return "No Download Parameters." # crash and burn if no id/url supplied
 
-    # Extract frames
+    cachefile = "cache/{}.cache".format(ytid)
 
-    frames = extract_frames.extract("{}.mp4".format(ytid), 1000)
+    if os.path.isfile(cachefile):
+        top_tag_dump = ""
+        with open(cachefile) as f:
+            top_tag_dump = f.read()
+        top_tag = json.loads(top_tag_dump)
+    else:
+        # Extract frames
 
-    # Recognise objects in images
+        frames = extract_frames.extract("{}.mp4".format(ytid), 1000)
 
-    total_tags = {}
+        # Recognise objects in images
 
-    for frame_path in frames:
-        tags = recognise.get_tensor_tags(frame_path)
-        total_tags.update(tags)
+        total_tags = {}
 
-    # Return top recognised keys
+        for frame_path in frames:
+            tags = recognise.get_tensor_tags(frame_path)
+            total_tags.update(tags)
 
-    sorted_tag_keys = sorted(total_tags, reverse = True)
+        # Return top recognised keys
 
-    top_tag = total_tags[sorted_tag_keys[0]]
+        sorted_tag_keys = sorted(total_tags, reverse = True)
 
-    runid = random.randint(0,100) #just to show that page updated
-    return "1. {} runid:{}".format(top_tag,runid)
+        top_tag = total_tags[sorted_tag_keys[0]]
+
+        print top_tag
+
+        top_tag_serialize = json.dumps(top_tag)
+
+        with open(cachefile, "w") as f:
+            f.write(top_tag_serialize)
+
+    result = {}
+    for tag in top_tag:
+        tag = tag.strip()
+        result[tag] = context.tag_info(tag)
+
+    result_serialize = json.dumps(result)
+
+
+    return result_serialize

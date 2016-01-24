@@ -1,13 +1,14 @@
 from app import app
-from flask import request
+from flask import request, render_template
 import os, sys, random, json
 # doublevision helper dependencies
 import video_dl, extract_frames, recognise, context
 
+
 @app.route('/')
 @app.route('/index')
 def index():
-    return "Hello, World!"
+    return render_template('index.html')
 
 '''
 Take an identifier argument (either url or ytid) and download

@@ -39,6 +39,7 @@ def by_ytid(ytid):
 
     ydl_opts = {
 
+	'audioformat' : "wav",
         "outtmpl": "%(id)s.%(ext)s"
 
     }

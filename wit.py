@@ -13,12 +13,13 @@ def recognizeText(audioFile):
 	WIT_AI_KEY = "AUIRKP74ZOKPLLHQDE4VKMGT25BN54U5" # Wit.ai keys are 32-character uppercase alphanumeric strings
 	try:
     		transText = r.recognize_wit(audio, key=WIT_AI_KEY)
+		#Remove when ready to use recognizeText
     		print("Wit.ai thinks you said " + transText)
 	except sr.UnknownValueError:
     		print("Wit.ai could not understand audio")
 	except sr.RequestError as e:
     		print("Could not request results from Wit.ai service; {0}".format(e))
-	return
+	return transText
 
 #Test call. Remove when ready to use recognizeText
 recognizeText("test.wav")
